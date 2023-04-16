@@ -1,19 +1,27 @@
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, jsonify
 import os
+import base64
+import io
 import numpy as np
 from PIL import Image
 from tensorflow.keras.models import load_model
 
 app = Flask(__name__)
-app.config['UPLOAD_FOLDER'] = 'static/uploads'
 
-model_path = 'model/trash_classifier_model.h5'
+model_path = 'model/trash_classifier.h5'
 model = load_model(model_path)
-label_map = {0: 'Cardboard', 1: 'Glass', 2: 'Metal', 3: 'Paper', 4: 'Plastic', 5: 'Trash'}
+label_map = {
+    0: {'class': 'Cardboard', 'bin': 'Blue'},
+    1: {'class': 'Glass', 'bin': 'Blue'},
+    2: {'class': 'Metal', 'bin': 'Blue'},
+    3: {'class': 'Paper', 'bin': 'Blue'},
+    4: {'class': 'Plastic', 'bin': 'Blue'},
+    5: {'class': 'Trash', 'bin': 'Brown'}
+}
 
-def process_image(image_path):
-    img = Image.open(image_path)
-    img = img.resize((224, 224))
+
+def process_image(image):
+    img = image.resize((224, 224))
     img = np.asarray(img)
     img = img / 255.0
     return img
@@ -21,23 +29,23 @@ def process_image(image_path):
 def predict_label(image):
     image = np.expand_dims(image, axis=0)
     prediction = model.predict(image)
-    label = label_map[np.argmax(prediction)]
-    return label
+    label_info = label_map[np.argmax(prediction)]
+    return label_info
 
-@app.route('/', methods=['GET', 'POST'])
+
+@app.route('/', methods=['GET'])
 def index():
-    if request.method == 'POST':
-        if 'file' not in request.files:
-            return redirect(request.url)
-        file = request.files['file']
-        if file.filename == '':
-            return redirect(request.url)
-        file_path = os.path.join(app.config['UPLOAD_FOLDER'], file.filename)
-        file.save(file_path)
-        image = process_image(file_path)
-        label = predict_label(image)
-        return render_template('result.html', image_path=file_path, label=label)
     return render_template('index.html')
+
+@app.route('/classify', methods=['POST'])
+def classify():
+    data = request.json
+    image_data = data['image'].split(',')[1]
+    image = Image.open(io.BytesIO(base64.b64decode(image_data)))
+    processed_image = process_image(image)
+    label_info = predict_label(processed_image)
+    return jsonify(label_info)
+
 
 if __name__ == '__main__':
     app.run(debug=True)
