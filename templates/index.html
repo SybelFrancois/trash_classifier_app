@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trash Classification App</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <h1>Welcome to the Trash Classification App</h1>
+    <p>Use your webcam to capture an image of the trash item you want to classify.</p>
+    <div>
+        <video id="webcam" autoplay width="640" height="480"></video>
+        <button id="capture">Capture</button>
+        <canvas id="canvas" width="640" height="480" style="display:none;"></canvas>
+    </div>
+    <div id="result"></div>
+    <script>
+        // Your JavaScript code will go here
+        const video = document.getElementById('webcam');
+const captureButton = document.getElementById('capture');
+const canvas = document.getElementById('canvas');
+const resultDiv = document.getElementById('result');
+
+async function initializeWebcam() {
+    try {
+        const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+        video.srcObject = stream;
+    } catch (err) {
+        console.error('Error accessing webcam:', err);
+    }
+}
+
+captureButton.addEventListener('click', async () => {
+    // Capture a frame from the webcam
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    canvas.getContext('2d').drawImage(video, 0, 0);
+
+    // Convert the captured frame to a base64 string
+    const image = canvas.toDataURL('image/jpeg', 0.5);
+
+    // Send the captured frame to the Flask app for classification
+    const response = await fetch('/classify', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ image: image })
+    });
+
+    // Display the result returned by the Flask app
+    if (response.ok) {
+    const { class: label, bin } = await response.json();
+    resultDiv.innerHTML = `Predicted class: ${label}<br>Put it in the ${bin} bin.`;
+} else {
+    console.error('Error during classification:', response.statusText);
+}
+
+});
+
+initializeWebcam();
+
+    </script>
+</body>
+</html>
