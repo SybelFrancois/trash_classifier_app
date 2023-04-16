@@ -82,7 +82,8 @@ This project was developed by **Abdoul-Hanane Gbadamasi & Sybel Francois**. Spec
 
 Copyright **2023** **Abdoul-Hanane Gbadamasi & Sybel Francois**.
 
-This project is licensed under the MIT License. See the LICENSE file for more details.
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for more details.
+
 
  
 
