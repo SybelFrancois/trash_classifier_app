@@ -44,6 +44,13 @@ Train a computer vision model using OpenCV to detect the color of trash cans. Us
 Build a Flask app that uses the trained trash classifier and can detector models to classify images of trash and detect the color of trash cans. The app should enable the user to capture images from their webcam and display the classification results.
 
 
+    Open the Trash Classifier and Organizer web app in your browser.
+    Capture or upload an image of the trash item you want to dispose of.
+    Capture or upload images of the available trash cans for classification.
+    The app will analyze the images and display the correct trash can for disposing of the trash item.
+  
+
+
 
 **To deploy the app, run the following command in your terminal:**
 
@@ -59,13 +66,8 @@ This will start the Flask app on your local machine. You can access the app by o
 
 From this project, we realized how challenging it can be to create a trash classifier and organizer. But we definitely enjoyed the process and have learned a lot.
 
-## Usage
 
-    Open the Trash Classifier and Organizer web app in your browser.
-    Capture or upload an image of the trash item you want to dispose of.
-    Capture or upload images of the available trash cans for classification.
-    The app will analyze the images and display the correct trash can for disposing of the trash item.
-   Access the web interface at http://localhost:5000
+
 
 ## Contributing
 
@@ -77,7 +79,8 @@ This project was developed by **Abdoul-Hanane Gbadamasi & Sybel Francois**. Spec
 
 ## License
 
-Copyright **2023** **Abdoul-Hanane Gbadamasi & Sybel Francois**
+Copyright **2023** **Abdoul-Hanane Gbadamasi & Sybel Francois**.
+
 This project is licensed under the MIT License. See the LICENSE file for more details.
 
  
